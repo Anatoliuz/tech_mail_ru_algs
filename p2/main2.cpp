@@ -1,148 +1,104 @@
 #include <iostream>
 #include <cassert>
-
-/*
- Задача 2_4:
- “Считалочка”. В круг выстроено N человек, пронумерованных числами от 1 до N.
- Будем исключать каждого k-ого до тех пор, пока не уцелеет только один человек.
- (Например, если N=10, k=3, то сначала умрет 3-й, потом 6-й, затем 9-й,
- затем 2-й, затем 7-й, потом 1-й, потом 8-й, за ним - 5-й, и потом 10-й.
- Таким образом, уцелеет 4-й.) Необходимо определить номер уцелевшего.
- N, k ≤ 10000.
- */
-
-//Решение:
-/*
- Задача решается при помощи закольцованного односвязного списка.
- Каждый узел списка будет хранить первоначальный номер узла
- (на момент инициализации) и указатель на следующий элемент.
- У последнего элемента в списке указатель на следующий элемент последнего узла
- будет указывать на "голову" списка.
- Каждый k-ый элемент будем удалять, а у элемента,
- стоящего перед ним, указатель на следующий узел списка
- будем менять на элемент, находящийся после удаляемого.
- Цикл решения продолжается до тех пор, пока у "головы" списка указатель на следующий
- не станет равным нулем.
- У оставшегося элемента смотрим его номер, это и будет ответом.
- 
- */
-
-
-/*
- Класс, хранящий числа N, k из условия задачи,
- структуру(макет списка) и указатель на "голову" + все методы,
- необходимые для решения задачи
- */
+using namespace std;
 class Count{
 private:
-    int maxNum; //число N из условия задачи
-    int curNum; //номер элемента, который в данный момент проверяется на
-    struct meStruct{ //описание узлов списка
-        int numberOfNode; //номер узла на момент инициализации
-        meStruct* next; //указатель на следующий элемент
+    int maxNum;
+    int curNum;
+    struct meStruct{
+        int numberOfNode;
+        meStruct* next;
     };
-    meStruct* head; //указатель на колову списка
+    meStruct* head;
 public:
     
-    Count(int _maxNum){ //конструктор инициализации
-        maxNum = _maxNum; //получаем число N из условия задачи
-        curNum = 1; //текущая позиция счёта(начинаем счёт с 1)
-        head = new meStruct; //выделяем память под первый элемент списка
-        head->numberOfNode = curNum;  //первый элемент имеет номер 1
-        head->next = head; //удовлетворяем критерию закольцованности списка
-        AddNumberOfNodes(head, curNum); //запускаем инициализацию нашего списка
+    Count(int _maxNum){
+        maxNum = _maxNum;
+        curNum = 1;
+        head = new meStruct;
+        head->numberOfNode = curNum;
+        head->next = head;
+        AddNumberOfNodes(head, curNum);
     }
-    //Метод создающий список вида  ->node1_ -> node_2 -> ... -> node_N-1 -> node_N-
-    //                            |________________________________________________|
-    // Аргумент last принимет указатель на голову списка
-    // Аргумент _curNum указывает на выделяемых узлов
-    void AddNumberOfNodes(meStruct* last, int _curNum){
-    while ( _curNum != maxNum)  {
-        Add(last, ++_curNum); //Вызываем функцию добавления узла после текущего с номером
-        //на единицу больше текущего узла
-        last = last->next; //теперь указатель на следующий элемент не пустой
-    }
-}
-
-void Add(meStruct* last,int num) //Метод добавления узла после текущего
-{
-    meStruct* newStruct = new meStruct; //выделяем память под новый узел
-    newStruct->numberOfNode = num;  //заполняем поле номера узла
-    newStruct->next = head; //сохраняем условия закольцованности
-    last->next = newStruct; //указатель на следующий элемент указывает на добавленный
-}
-//Метод удаляющий каждый к ый элемент списка
-
-
-void DeleteAtK(int k){
-    meStruct* node = head; // начинаем решение с  головы списка
-    node = OffsetByKMinusOne(node, k); //смещаемся на элемент
-    // перед удаляемым (т.е. на к - 1 элемент)
     
-    DeleteNodeAfter(node);//удаляем k-ый элемент
-    //принимаем указатель на улемент перед к-ым
-    //удаляем и сохраняем целостность структуры данных
-    while (head -> next != head ) { //пока в списке не останется 1 элемент
-        node = OffsetByKMinusOne(node, k + 1); //начиная со второго элемента
-        //в OffsetByKMinusOne нужно передать аргумент
-        //на единицу больше, т.к. для достижения
-        //следующего k-1(го) элемента, нужно будет пройти
-        //на 1 указатель больше(так устроена функция OffsetByKMinusOne )
-        DeleteNodeAfter(node); //Удаляем следующий за полученным узлом узел.
-    }
-}
-//Функция смещения
-meStruct* OffsetByKMinusOne(meStruct* node, int offset)
-{
-    //смещаемся на k(offset) - 1 элемент вперёд, т.к.
-    //необходимо получить указатель на элемент, стоящий перед
-    //удаляемым (функция удаления удаляет не текущий элемент, а
-    //следующий за переданным).
-    while (offset != 2) {
-        node = node->next;
-        offset--;
-    }
-    return node;//возвращаем указатель на k-1 элемент
-}
-//удаляем элемент после переданного
-void DeleteNodeAfter(meStruct* node)
-{
-    assert(node); //проверяем является ли список пустым
-    if( node -> next == head) //если удаляем голову списка
-        //нужно перестваить указатель последнего узла
-        //на новую(узел стоящий после головы) голову списка
+    meStruct* OffsetByKMinusOne(meStruct* node, int offset)
     {
-        meStruct* tempo;
-        tempo = head -> next; //сохраняем новую голову списка
-//        delete head; //освобождыем память
-        head = tempo; //настраиваем головной указатель на новый узел
-        node->next = head; //последний элемент указывает на новый первый
+        while (offset != 2) {
+            node = node->next;
+            offset--;
+        }
+        return node;
     }
-    meStruct* temp = node -> next -> next;  //сохраняем указатель на узел
-    //после удаляемого узла
-    node->next = temp; //переносим у k-1 узла указатель на следующий
-    //на k+1 узел
-}
-int Result()
-{
-    return head -> numberOfNode; //Ответ на задачу
-}
-~Count(){//Деструктор
-   while (head != NULL)  //Пока по адресу не пусто
-   {
-       meStruct *temp=head->next; //Временная переменная для хранения адреса следующего элемента
-       delete head; //Освобождаем адрес обозначающий начало
-       head=temp; //Меняем адрес на следующий
-   }
-}
+    
+    void AddNumberOfNodes(meStruct* last, int _curNum){
+        while ( _curNum != maxNum)  {
+            Add(last, ++_curNum);
+            last = last->next;
+        }
+    }
+    
+    void Add(meStruct* last,int num)
+    {
+        meStruct* newStruct = new meStruct;
+        newStruct->numberOfNode = num;
+        newStruct->next = head;
+        last->next = newStruct;
+    }
+    //
+    bool DeleteNodeAfter(meStruct* node)
+    {
+        assert(node);
+        if( node -> next == head)
+        {
+            meStruct* tempo;
+            tempo = head -> next;
+            delete head;
+            head = tempo;
+            node->next = head;
+            return true;
+        }
+        
+        meStruct* temp = node -> next -> next;
+        delete node->next;//?
+        node->next = temp;
+        return true;
+        
+        
+        //   std::cout << "we have problems";
+        return false;
+        
+    }
+    
+    void DeleteAtK(int k){
+        meStruct* node = head;
+        node = OffsetByKMinusOne(node, k);
+        DeleteNodeAfter(node);
+        while (head -> next != head ) {
+            node = OffsetByKMinusOne(node, k + 1);
+            DeleteNodeAfter(node);
+        }
+    }
+    
+    int Result()
+    {
+        return head -> numberOfNode;
+    }
+    ~Count(){//Деструктор
+        while (head != NULL)  //Пока по адресу не пусто
+        {
+            meStruct *temp=head->next; //Временная переменная для хранения адреса следующего элемента
+            delete head; //Освобождаем адрес обозначающий начало
+            head=temp; //Меняем адрес на следующий
+        }
+    }
 };
 
 
 int main(int argc, const char * argv[])
 {
-    int size = 0; //N
+    int size = 0;
     scanf("%d", &size);
-    int offset = 0; //k
+    int offset = 0;
     scanf("%d", &offset);
     
     Count* myClass = new Count(size);
@@ -151,3 +107,4 @@ int main(int argc, const char * argv[])
     printf("%d", res);
     return 0;
 }
+
