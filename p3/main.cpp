@@ -26,12 +26,12 @@ int BinSearch(int* array, int searchingElement, int left, int right){
         return BinSearch(array, searchingElement, mid + 1, right);
     }
 }
+
 void FindIndexes(){
     int sizeOfA = 0;
     int sizeOfB = 0;
     std::cin >> sizeOfA >> sizeOfB;
     std::cout << std::endl;
-
     int A[sizeOfA];
     int B[sizeOfB];
     
@@ -39,7 +39,7 @@ void FindIndexes(){
         std::cin >> A[pos];
     }
     std::cout << std::endl;
-
+    
     for (int pos = 0; pos < sizeOfB; ++pos) {
         std::cin >> B[pos];
     }
@@ -49,6 +49,7 @@ void FindIndexes(){
             std::cout << 0 << " ";
             continue;
         }
+        powOfTwoIndex = 1;
         for(int posA = 1; posA < sizeOfA; ) {
             if (A[sizeOfA - 1] < B[posB] ) {
                 std::cout<< sizeOfA << " " ;
@@ -82,7 +83,6 @@ void FindIndexes(){
         }
     }
 }
-
 int main(int argc, const char * argv[])
 {
     FindIndexes();
