@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include <cassert>
 #define POPFRONT 2
@@ -16,16 +15,14 @@ public:
     ~MyQueue() { delete[] buffer ;};
     void PushBack(int num);
     int PopFront();
-    
     bool IsEmpty() const { return tail == head; }
-    };
+};
 
 MyQueue::MyQueue(int size ) :
-    bufferSize(size),
-    head(0),
-    tail(0)
+bufferSize(size),
+head(0),
+tail(0)
 {
-    
     buffer = new int[bufferSize];
 }
 
@@ -34,15 +31,11 @@ void MyQueue::PushBack( int num)
     if ( ( tail + 1 ) % bufferSize == head) {
         int* newBuffer = new int[bufferSize*2];
         int temp = head;
-
-        for (int pos = 0; pos < bufferSize - 1; ++pos) {
-                newBuffer[pos] = buffer[temp];
-            cout << "pos " << pos << "temp " << temp;
-                temp = (temp + 1) % bufferSize;
-            
-        }
-        cout << endl;
         
+        for (int pos = 0; pos < bufferSize - 1; ++pos) {
+            newBuffer[pos] = buffer[temp];
+            temp = (temp + 1) % bufferSize;
+        }
         head = 0;
         tail = bufferSize - 1;
         bufferSize *= 2;
@@ -50,39 +43,21 @@ void MyQueue::PushBack( int num)
         buffer = newBuffer;
         buffer[tail] = num;
         tail = ( tail + 1 ) % bufferSize;
-        cout << "Added:" << num << endl;
-        for (int index = 0; index < bufferSize; ++index) {
-            cout<< "!!!" <<buffer[index] <<" " ;
-        }
-        cout<< endl;
     }
-    else{
-    buffer[tail] = num;
-    tail = ( tail + 1 ) % bufferSize;
-    for (int index = 0; index < bufferSize; ++index) {
-        cout<< buffer[index] <<" " ;
+    else
+    {
+        buffer[tail] = num;
+        tail = ( tail + 1 ) % bufferSize;
     }
-    cout<<endl;
-    cout<< " head " << head << " tail " << tail <<  " ";
-    cout<<endl;
-    }
-
+    
 }
 
 int MyQueue::PopFront(){
     if (head == tail) {
-        cout << "QUEUE IS EMPTY";
-        return -1;
+               return -1;
     }
     int res = buffer[head];
     head = (head + 1) % bufferSize;
-    for (int index = 0; index < bufferSize; ++index) {
-        cout<<buffer[index] <<" " << endl;
-    }
-
-    cout<<endl;
-    cout<< " head " << head << " tail " << tail <<  " ";
-    cout<<endl;
     return res;
 }
 int main(int argc, const char * argv[])
@@ -96,12 +71,11 @@ int main(int argc, const char * argv[])
     {
         int command = 0;
         int operand = 0;
-        cin >> command;
-        cin >> operand;
-        if (command == POPFRONT && queue.IsEmpty() && operand == -1) {
-            flagNo = 1;
+        cin >> command >> operand;
+        if (command == POPFRONT && queue.IsEmpty() && operand != -1) {
+                flagNo = 1;
         }
-        if (command == POPFRONT &&  !queue.IsEmpty()) {
+        else if (command == POPFRONT &&  !queue.IsEmpty()) {
             if(operand != queue.PopFront()){
                 flagNo = 1;
             }
@@ -110,13 +84,10 @@ int main(int argc, const char * argv[])
             queue.PushBack(operand);
         }
     }
-    if (flagNo) {
-        cout << "NO";
-    }
-    else{
+    if (!flagNo) {
         cout << "YES";
     }
-
+    else cout <<"NO";
+    
     return 0;
 }
-
