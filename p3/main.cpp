@@ -12,7 +12,7 @@
 int BinSearch(int* array, int searchingElement, int left, int right){
     
     if(left > right){
-        return -1;
+        return left;
     }
     int mid = (left+right)/2;
     
@@ -27,64 +27,63 @@ int BinSearch(int* array, int searchingElement, int left, int right){
     }
     return -1;
 }
-
-
-int main(int argc, const char * argv[])
-{
-    int B[4] = { 6, 9, 10, 12 };
-    int A[4] = { 8, 7, 9, 10 };
- //   int i = BinSearch(temp, 2, 0, 5);
-    int sizeOfA = 4;
-    int sizeOfB = 4;
-//    //scanf("%d", &sizeOfA);
-//   // scanf("%d", &sizeOfB);
-//    int A[sizeOfA];
-//    int B[sizeOfB];
-//    
-//    for (int pos = 0; pos < sizeOfA; ++pos) {
-//        scanf("%d", &A[pos]);
-//        printf("%d", A[pos]);
-//    }
-//    
-//    for (int pos = 0; pos < sizeOfB; ++pos) {
-//        scanf("%d", &B[pos]);
-//        printf("%d", B[pos]);
-//    }
+void FindIndexes(){
+    int sizeOfA = 0;
+    std::cin >> sizeOfA;
+    int sizeOfB = 0;
+    std::cin >> sizeOfB;
+    int A[sizeOfA];
+    int B[sizeOfB];
+    
+    for (int pos = 0; pos < sizeOfA; ++pos) {
+        std::cin >> A[pos];
+    }
+    for (int pos = 0; pos < sizeOfB; ++pos) {
+        std::cin >> B[pos];
+    }
     int powOfTwoIndex = 1;
     for (int posB = 0; posB < sizeOfB; ++posB) {
         if (B[posB] == A[0]) {
-            std::cout << 0 << " ";
+            std::cout << 0;
             continue;
         }
-
         for(int posA = 1; posA < sizeOfA; ) {
-            if (B[posB] == A[posA]) {
-                std::cout << posA << " ";
-                posA = sizeOfA + 1;
-            }
-           else if (A[posA] > B[posB]) {
-                if (posA > sizeOfA) {
-                    return -1;
-                }
-               int k = BinSearch(A, B[posB], pow(2, powOfTwoIndex - 1), posA);
-               if (k >= 0) {
-                   std::cout <<"k" << k << " ";
-               }
-               if (k < 0){
-                 std::cout <<"SolveIt" << posA << " ";
-               }
-               posA = sizeOfA + 1;
-
-            }
-            else posA = pow(2, ++powOfTwoIndex);
             if (A[sizeOfA - 1] < B[posB] ) {
-                std::cout<< sizeOfA - 1 << " " ;
+                std::cout<< sizeOfA - 1 ;
                 posA = sizeOfA + 1;
+                continue;
+            }
+            if (B[posB] == A[posA]) {
+                std::cout<< posA;
+                posA = sizeOfA + 1;
+                continue;
+            }
+            else if (A[posA] > B[posB]) {
+                if (pow(2, powOfTwoIndex - 1) == 1) {
+                    int k = BinSearch(A, B[posB], 0, 1);
+                    std::cout << k;
+                    posA = sizeOfA + 1;
+                }
+                else{
+                    int k = BinSearch(A, B[posB], 0, posA);
+                    std::cout << k;
+                    posA = sizeOfA + 1;
+                }
+                
+            }
+            else {
+                posA = pow(2, ++powOfTwoIndex);
+                if (posA > sizeOfA - 1) {
+                    posA = sizeOfA - 1;
+                }
             }
         }
-        powOfTwoIndex = 1;
     }
-  
-    return 0;
+}
+
+int main(int argc, const char * argv[])
+{
+    FindIndexes();
+       return 0;
 }
 
