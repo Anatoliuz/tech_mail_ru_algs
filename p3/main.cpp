@@ -22,51 +22,53 @@ int BinSearch(int* array, int searchingElement, int left, int right){
     if (array[mid] > searchingElement) {
         return BinSearch(array, searchingElement, left, mid - 1);
     }
-    if (array[mid] < searchingElement) {
+    else  {
         return BinSearch(array, searchingElement, mid + 1, right);
     }
-    return -1;
 }
 void FindIndexes(){
     int sizeOfA = 0;
-    std::cin >> sizeOfA;
     int sizeOfB = 0;
-    std::cin >> sizeOfB;
+    std::cin >> sizeOfA >> sizeOfB;
+    std::cout << std::endl;
+
     int A[sizeOfA];
     int B[sizeOfB];
     
     for (int pos = 0; pos < sizeOfA; ++pos) {
         std::cin >> A[pos];
     }
+    std::cout << std::endl;
+
     for (int pos = 0; pos < sizeOfB; ++pos) {
         std::cin >> B[pos];
     }
     int powOfTwoIndex = 1;
     for (int posB = 0; posB < sizeOfB; ++posB) {
         if (B[posB] == A[0]) {
-            std::cout << 0;
+            std::cout << 0 << " ";
             continue;
         }
         for(int posA = 1; posA < sizeOfA; ) {
             if (A[sizeOfA - 1] < B[posB] ) {
-                std::cout<< sizeOfA - 1 ;
+                std::cout<< sizeOfA << " " ;
                 posA = sizeOfA + 1;
                 continue;
             }
             if (B[posB] == A[posA]) {
-                std::cout<< posA;
+                std::cout<< posA << " ";
                 posA = sizeOfA + 1;
                 continue;
             }
             else if (A[posA] > B[posB]) {
                 if (pow(2, powOfTwoIndex - 1) == 1) {
                     int k = BinSearch(A, B[posB], 0, 1);
-                    std::cout << k;
+                    std::cout << k << " ";
                     posA = sizeOfA + 1;
                 }
                 else{
                     int k = BinSearch(A, B[posB], 0, posA);
-                    std::cout << k;
+                    std::cout << k << " ";
                     posA = sizeOfA + 1;
                 }
                 
@@ -84,6 +86,6 @@ void FindIndexes(){
 int main(int argc, const char * argv[])
 {
     FindIndexes();
-       return 0;
+    return 0;
 }
 
