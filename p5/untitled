@@ -1,0 +1,250 @@
+#include <cstdlib>
+#include <iostream>
+#include <vector>
+#include <string>
+#include <math.h>
+#define MAX 100
+#define NUMBER_MAX_LENGTH 10
+using namespace  std;
+char str[MAX];
+int sp = 0;
+int opPriority[256] = { ['('] = 0, ['+'] = 1, ['-'] = 1, ['*'] = 2, ['/'] = 2, ['^'] = 3 };
+char stack[MAX];
+long longs[MAX];
+char pop(void) {
+    if (sp > 0) {
+        return stack[--sp];
+    } else {
+       // fprintf(stderr, "Невозможно выполнить POP для пустого стека.\n");
+        return 0;
+    }
+};
+char peek(void) {
+    int a = sp;
+    a--;
+    if (a >= 0)
+    {
+        //printf("Peek: %c ", stack[a]);
+        return stack[a];
+    } else {
+        //fprintf(stderr, "Невозможно выполнить PEEK для пустого стека.\n");
+        return 0;
+    }
+};
+void push(char a) {
+    stack[sp++] = a;
+};
+int IsEmpty() {
+    if (sp <= 0)
+        return 1;
+    else
+    {
+        return 0;
+    }
+}
+int np = 0;
+long popLong(void) {
+    if (np > 0) {
+        return longs[--np];
+    } else {
+       // fprintf(stderr, "Невозможно выполнить POP для пустого стека.\n");
+        return 0;
+    }
+};
+long peekLong(void) {
+    long a = np;
+    
+    if (a >= 0)
+    {
+        //    printf("Peek: %ld ", longs[a]);
+        return longs[a-1];
+    } else {
+     //   fprintf(stderr, "Невозможно выполнить PEEK для пустого стекаLong.\n");
+        return 0;
+    }
+};
+void pushLong(long a) {
+    longs[np++] = a;
+};
+int IsEmptyLong() {
+    if (np <=
+        0)
+        return 1;
+    else
+    {
+        // printf("Стек пуст(IsEmptySource)\n");
+        return 0;
+    }
+}
+int LengthOfMas(char* mas)
+{
+    int length = 0;
+    for (int index = 0; mas[index] != '\0'; ++index) {
+        ++length;
+    }
+    return length;
+}
+char* Parse(string  mas,  int length)
+{
+    int jndex = 0;
+    char op1;
+    int curPriority = 0;
+    int stackPriority = 0;
+    memset(str, 0, sizeof(str));
+    for (int i = 0; i < length; ++i) {
+        if (isspace(mas[i])) {
+           // printf("space\n");
+        }
+        if(mas[i] >= '0' && mas[i] <= '9')
+        {
+            str[jndex] = mas[i];
+            jndex++;
+        }
+        else if(mas[i] == '(')
+        {
+            str[jndex] = '|';
+            jndex++;
+            push(mas[i]);
+        }
+        else if(mas[i] == ')')
+        {
+            //char b = peek();
+            // printf("Peek:%c\n", b);
+            while (peek() != '(') {
+                str[jndex] = pop();
+                jndex++;
+            }
+            pop();
+            //            char a = peek();
+            //            printf("Peek after: %c \n", a);
+        }
+        else if (mas[i] == '+' || mas[i] == '-'  || mas[i] == '/' || mas[i] == '*')
+        {
+            if (opPriority[mas[i]] == 1) {
+                curPriority = 1;
+            }
+            else if(opPriority[mas[i]] == 2)
+                curPriority = 2;
+            if(IsEmpty())
+            {
+                str[jndex] = '|';
+                jndex++;
+                push(mas[i]);
+                //printf("empty stack in oper processing)\n");
+            }
+            else if (!IsEmpty())
+            {
+                op1 = peek();
+                if (opPriority[op1] == 1) {
+                    stackPriority = 1;
+                }
+                else if (opPriority[op1] == 2)
+                {
+                    stackPriority = 2;
+                }
+                else if (opPriority[op1] == 0)
+                {
+                    stackPriority = 0;
+                }
+                while (curPriority <= stackPriority) {
+                    if(!IsEmpty()){
+                        str[jndex] = '|';
+                        jndex++;
+                        str[jndex] = pop();
+                        jndex++;
+                        op1 = peek();
+                        if (opPriority[op1] == 1) {
+                            stackPriority = 1;
+                        }
+                        else if (opPriority[op1] == 2)
+                        {
+                            stackPriority = 2;
+                        }
+                        else curPriority = (stackPriority + 1);
+                    }
+                   
+                }
+                str[jndex] = '|';
+                jndex++;
+                push(mas[i]);
+            }
+        }
+    }
+    str[jndex] = '|';
+    jndex++;
+    while (!IsEmpty()) {
+        str[jndex] = pop();
+        jndex++;
+    }
+    return str;
+}
+
+
+
+void Count(char* mas, int length)
+{
+    
+    long num = 0;
+    
+    for (int i = 0; i < length ; ++i)
+    {
+        
+        int j  = 0;
+        int k = 0;
+        if(mas[i] >= '0' && mas[i] <= '9')
+        {
+            int sizeOfTempArray = 400;
+            char* masToDoInt = new char[sizeOfTempArray]();
+            j = i;
+            while (mas[j] >= '0' && mas[j] <= '9') {
+                masToDoInt[k] = mas[j];
+                j++;
+                k++;
+            }
+            num = atof(masToDoInt);
+            pushLong(num);
+            printf("Num: here in stack:!!!%ld\n", peekLong());
+            k = 0;
+            i = j - 1;
+            delete [] masToDoInt;
+
+        }
+        else if (mas[i] == '+'){
+            pushLong(  popLong() + popLong() );
+            printf("Num: here in stack after + :%ld\n", peekLong());
+            
+        }
+        else if (mas[i] == '-'){
+            pushLong(  -popLong() + popLong() );
+            printf("Num: here in stack after -:%ld\n", peekLong());
+            
+        }
+        else if (mas[i] == '*'){
+            
+            pushLong(  popLong() * popLong() );
+            printf("Num: here in stack *: %ld\n", peekLong());
+            
+        }
+        else if (mas[i] == '/'){
+            long delimiter  = popLong();
+            pushLong(  popLong() / delimiter);
+            printf("Num: here in stack *:%ld\n", peekLong());
+        }
+    }
+}
+int main()
+{
+    vector<char> array;
+    string str;
+    cin >> str;
+    char mas[] = "200­-(123+34*2)+(48-­2)";
+    int length = 0;
+    length = LengthOfMas(str);
+    char* myStr = Parse(str, length);
+    length= LengthOfMas(myStr);
+
+    Count(myStr, length);
+    long a = peekLong();
+    printf("%ld", a);
+    return 0;
+}
