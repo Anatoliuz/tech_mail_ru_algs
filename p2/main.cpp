@@ -1,140 +1,172 @@
-//
-//  main.cpp
-//  workingproject
-//
-//  Created by fix on 07/03/16.
-//  Copyright (c) 2016 Anatoly Filinov. All rights reserved.
-//
-// Задача 3.1
-/* Дан отсортированный массив целых чисел A[0..n­1] и массив целых чисел B[0..m­1]. Для каждого
- элемента массива B[i] найдите минимальный индекс k минимального элемента массива A, равного или
- превосходящего B[i]: A[k] >= B[i]. Если такого элемента нет, выведите n. Время работы поиска k для каждого
- элемента B[i]: O(log(k)).
- 
- n, m ≤ 10000.
- */
-
-//Решение
+#include <iostream>
 
 /*
- i, j обозначим pos
- n -> sizeOfA
- m -> sizeOfB
- powOfTwoIndex - текущая степень двойки, чтобы вызывать бинарный поиск более эффективно.
- 
- Для каждого элемента B[posB] будем проверять выполнимость некоторых условий
- относительно элементов из А.
- В зависимости от условия, выполняем определенные шаги.
- Также имеется немного модифицированный бинарный поиск, который
- в случае не нахождения элемента A[index] == B[jndex] в заданном интервале, воз-
- вращает индекс ближайшего большего элемента.
- Условия и шаги:
- 1) Если B[posB] == A[0] мы нашли индекс для i-го B, выведем 0 в поток.
- Приступаем к работе со следующим элементом из В.
- 2) Если B[posB] > A[sizeOfA - 1] выведем в поток sizeOfA, приступаем к следующему
- элементу из В.
- Далее posA будет степенью двойки
- 3) Если элементы равны, выводим posA, приступаем к следующему элементу из B.
- 4) Если A[posA] > B[posB]
- 4.1. Если двойка в степени powOfTwoIndex == 1, мы смотрим нулевой элемент из А(т.е.
- делаем первый проход по второму вложенному циклу), вызываем бинарный поиск в интервале
- от 0 до 2^0 = 1; бинарный поиск находит индекс элемента из А либо равного элементу из
- B, либо ближайшего большего числа.
- Выводим индекс, который вернет бинарный поиск, приступаем к следующему элементу из B.
- 4.2. Если проход по второму циклу не первый,мы вызываем бинарный поиск в интервале от 2^x-1 до 2^x
- Тем самым удовлетворяя сложности О(logk)
- Выводим индекс, который вернет бинарный поиск, приступаем к следующему элементу из B.
- 4.3. Если мы не нашли элемент в интервале 2^x до 2^x-1, смещаем отрезок поиска, но если двойка
- в новой степени больше sizeOfA - 1 интервал будет иметь вид от 2^x(i)-1 до sizeOfA - 1
+ Задача 2_4:
+ “Считалочка”. В круг выстроено N человек, пронумерованных числами от 1 до N.
+ Будем исключать каждого k-ого до тех пор, пока не уцелеет только один человек.
+ (Например, если N=10, k=3, то сначала умрет 3-й, потом 6-й, затем 9-й,
+ затем 2-й, затем 7-й, потом 1-й, потом 8-й, за ним - 5-й, и потом 10-й.
+ Таким образом, уцелеет 4-й.) Необходимо определить номер уцелевшего.
+ N, k ≤ 10000.
+ */
+
+//Решение:
+/*
+ Задача решается при помощи закольцованного односвязного списка.
+ Каждый узел списка будет хранить первоначальный номер узла
+ (на момент инициализации) и указатель на следующий элемент.
+ У последнего элемента в списке указатель на следующий элемент последнего узла
+ будет указывать на "голову" списка.
+ Каждый k-ый элемент будем удалять, а у элемента,
+ стоящего перед ним, указатель на следующий узел списка
+ будем менять на элемент, находящийся после удаляемого.
+ Цикл решения продолжается до тех пор, пока у "головы" списка указатель на следующий
+ не станет равным нулем.
+ У оставшегося элемента смотрим его номер, это и будет ответом.
  
  */
-#include <iostream>
-#include <math.h>
 
-int BinSearch(int* array, int searchingElement, int left, int right){
-    
-    if(left > right){
-        return left; //возвращаем ближайший больший элемент
-    }
-    int mid = (left+right)/2;
-    
-    if (array[mid] == searchingElement) {
-        return mid;
-    }
-    if (array[mid] > searchingElement) {
-        return BinSearch(array, searchingElement, left, mid - 1);
-    }
-    else  {
-        return BinSearch(array, searchingElement, mid + 1, right);
-    }
-}
 
-int LogSearch(int* A, int sizeOfA, int& B){
-    int powOfTwoIndex = 1;
-    if (B == A[0]) {
-        return 0;
-    }
-    // 2 шаг
-    if (A[sizeOfA - 1] < B ) {
-        return sizeOfA;
-    }
-    powOfTwoIndex = 1;
-    for(int posA = 1; posA < sizeOfA; ) {
-        //3 шаг
-        if (B == A[posA]) {
-            return posA;
-        }
-        //4 шаг
-        else if (A[posA] > B) {
-            //4.1 шаг
-            if (pow(2, powOfTwoIndex - 1) == 1) {
-                return BinSearch(A, B, 0, 1);
-            }
-            //4.2 шаг
-            else{
-                return BinSearch(A, B, pow(2, powOfTwoIndex - 1), posA);
-            }
-            
-        }
-        //4.3 шаг
-        else {
-            posA = pow(2, ++powOfTwoIndex);
-            if (posA > sizeOfA - 1) {
-                posA = sizeOfA - 1; //проверка на не выход за границу массива
-            }
-        }
-    }
-    return -1;
-}
-void Input(int& sizeOfA, int& sizeOfB, int* A, int* B){
-    
-    std::cin >> sizeOfA >> sizeOfB;
-    std::cout << std::endl;
-    
-    for (int pos = 0; pos < sizeOfA; ++pos) {
-        std::cin >> A[pos];
-    }
-    std::cout << std::endl;
-    
-    for (int pos = 0; pos < sizeOfB; ++pos) {
-        std::cin >> B[pos];
-    }
-}
 
-void Output(){
-    int sizeOfA = 0;
-    int sizeOfB = 0;
-    int A[sizeOfA];
-    int B[sizeOfB];
-    Input(sizeOfA, sizeOfB, A, B);
-    for (int posB = 0; posB < sizeOfB; ++posB)
+class ForwardList{
+public:
+    struct node{
+        int numberOfNode;
+        node* next; //указатель на следующий элемент
+    };
+   
+
+    int max_size(){
+        return maxNum;
+    }
+    int order_number(){
+        return curNum; //номер элемента, добавленного последним в список
+    }
+    node* next_after(node* find_next){
+        return find_next->next;
+    }
+
+    node* next_after(node* find_next, int number){
+        if (number == 0) {
+            return find_next;
+        }
+        int counter = 1;
+        node* temp = find_next;
+        while(counter <= number){
+            counter++;
+            temp = temp -> next;
+        }
+        return temp;
+    }
+    
+    node* end(){
+        node* temp = head->next;
+        node* end = nullptr;
+        while (temp->next != head) {
+            temp = temp -> next;
+            end = temp;
+        }
+        return temp;
+    }
+    node *&getHead() {
+        return head;
+    }
+    
+    void push_back(node* last)
     {
-        std::cout << LogSearch(A, sizeOfA, B[posB]) <<" ";
+        if (!getHead()) {
+            curNum = 1; //текущая позиция счёта(начинаем счёт с 1)
+            head = new node;
+            head->numberOfNode = curNum;
+            head->next = head; //удовлетворяем критерию закольцованности списка
+        }
+        else {
+            node* newStruct = new node;
+            newStruct->numberOfNode = last->numberOfNode + 1;
+            newStruct->next = head;
+            last->next = newStruct;
+            curNum = newStruct->numberOfNode;
+        }
     }
+    
+    void push_back(node* last, int num)
+    {
+        push_back(last);
+        end()->numberOfNode = num;
+    }
+    
+    
+    void remove_after(node* prev_node)
+    {
+        if(  prev_node -> next == head)
+        {
+            node* next =  prev_node->next;//сохраняем новую голову списка
+            head = prev_node->next->next;
+             prev_node->next =  prev_node->next->next;
+            delete next; //освобождыем память
+        }
+        else {
+            node *next =  prev_node->next;
+             prev_node->next =  prev_node->next->next;
+            delete next;
+        }
+    }
+    
+    ForwardList(int _maxNum){
+        maxNum = _maxNum;
+    }
+    ~ForwardList(){//Деструктор
+        while (head != NULL)  //Пока по адресу не пусто
+        {
+            node *temp=head->next; //Временная переменная для хранения адреса следующего элемента
+            delete head; //Освобождаем адрес обозначающий начало
+            head=temp; //Меняем адрес на следующий
+        }
+    }
+
+private:
+    int maxNum; //число N из условия задачи
+    int curNum; //номер элемента, который в данный момент проверяется
+    node* head; //указатель на колову списка
+};
+
+
+void delete_every_offset(ForwardList &list, int offset){
+    int counter = 0;
+    ForwardList::node *node = list.getHead();
+    for (int i = 0; i < offset - 2; ++i) { //при первом удалении нужно пройти на 1 указатель меньше
+        node = node -> next;
+    }
+    list.remove_after(node);
+    for (; list.getHead()->next != list.getHead(); node = node->next) {
+        if (counter == offset - 1) {
+            list.remove_after(node);
+            counter = 0;
+        }
+        counter++;
+    }
+    
+    
 }
+
+
+void fill_list(ForwardList &list, int number){ //заполняем список
+    if (list.getHead() == 0) {
+        list.push_back(list.getHead());
+    }
+    for(int i = 0; ( i < list.max_size() - 1) && i < number; ++i)
+        list.push_back(list.end(), list.order_number() + 1);
+}
+
 int main(int argc, const char * argv[])
 {
-    Output();
+    int size = 0; //N
+    scanf("%d", &size);
+    int offset = 0; //k
+    scanf("%d", &offset);
+    ForwardList* list = new ForwardList(size);
+    fill_list(*list, size);
+    delete_every_offset(*list, offset);
+    printf("%d", list->getHead()->numberOfNode);
     return 0;
 }
-
