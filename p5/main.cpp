@@ -1,9 +1,9 @@
 #include <iostream>
 #include <cstdlib>
-#define MAX 1000
-
+#define MAX 2000
+#define STACK_SIZE 200
 using namespace std;
-char str[MAX];
+char str[MAX] = {};
 int sp = 0;
 
 int opPriority[256];
@@ -13,10 +13,10 @@ void Init(int* priorityArray){
     priorityArray['-'] = 1;
     priorityArray['*'] = 2;
     priorityArray['/'] = 2;
-
+    
 }
-char stack[MAX];
-int ints[MAX];
+char stack[STACK_SIZE];
+long longs[MAX];
 char PopOperator(void) {
     if (sp > 0) {
         return stack[--sp];
@@ -37,7 +37,7 @@ char PeekOperator(void) {
 void PushOperator(char a) {
     stack[sp++] = a;
 };
-int IsEmptyOperatorsStack() {
+bool IsEmptyOperatorsStack() {
     if (sp <= 0)
         return 1;
     else
@@ -45,30 +45,29 @@ int IsEmptyOperatorsStack() {
         return 0;
     }
 }
-int np = 0;
-int PopNumber(void) {
+long np = 0;
+long PopNumber(void) {
     if (np > 0) {
-        return ints[--np];
+        return longs[--np];
     } else {
         return 0;
     }
 };
-int PeekNumber(void) {
-    int a = np;
+long PeekNumber(void) {
+    long a = np;
     --a;
     if (a >= 0)
     {
-        return ints[a];
+        return longs[a];
     } else {
         return 0;
     }
 };
-void PushNumber(int a) {
-    ints[np++] = a;
+void PushNumber(long a) {
+    longs[np++] = a;
 };
-int IsEmptyLong() {
-    if (np <=
-        0)
+bool IsEmptyLong() {
+    if (np <=  0)
         return 1;
     else
     {
@@ -78,24 +77,29 @@ int IsEmptyLong() {
 int LengthOfMas(char* array)
 {
     int length = 0;
-    for (int index = 0; array[index] != '\0'; ++index) {
+    for (int index = 0; array[index] != '\0' && array[index] !='\n'; ++index) {
         ++length;
     }
     return length;
 }
+void insert_sign(char *str, int& index){
+    if (str[index-1] != '|') {
+        str[index] = '|';
+        ++index;
+    }
+}
 char* DoPolishNotion(char* inputArray,  int length)
 {
-
+    
     int jndex = 0;
-    char op1;
+    int op1 = 0;
     int curPriority = 0;
     int stackPriority = 0;
-    for (int i = 0; i < MAX; ++i) {
-        str[i] = '\0';
-    }
+    
     for (int i = 0; i < length; ++i) {
-        if (isspace(inputArray[i])) {}
-        
+        if (isspace(inputArray[i])) {
+            continue;
+        }
         if(inputArray[i] >= '0' && inputArray[i] <= '9')
         {
             str[jndex] = inputArray[i];
@@ -103,78 +107,79 @@ char* DoPolishNotion(char* inputArray,  int length)
         }
         else if(inputArray[i] == '(')
         {
-            str[jndex] = '|';
-            jndex++;
+            insert_sign(str, jndex);
             PushOperator(inputArray[i]);
         }
         else if(inputArray[i] == ')')
         {
+            insert_sign(str, jndex);
             while (PeekOperator() != '(') {
                 str[jndex] = PopOperator();
                 jndex++;
             }
             PopOperator();
-            
         }
-        else if (inputArray[i] == '+' || inputArray[i] == '-'  || inputArray[i] == '/' || inputArray[i] == '*')
+        else if (inputArray[i] == '+' || inputArray[i] == '-'  || inputArray[i] == '/'
+                 || inputArray[i] == '*')
         {
             if (opPriority[(int)inputArray[i]] == 1) {
                 curPriority = 1;
             }
             else if(opPriority[(int)inputArray[i]] == 2)
                 curPriority = 2;
-            
             if(IsEmptyOperatorsStack())
             {
-                str[jndex] = '|';
-                jndex++;
+                insert_sign(str, jndex);
                 PushOperator(inputArray[i]);
-                //printf("empty stack in oper processing)\n");
+                insert_sign(str, jndex);
             }
             else if (!IsEmptyOperatorsStack())
             {
                 op1 = PeekOperator();
-                if ((int)opPriority[(int)op1] == 1) {
+                if ((int)opPriority[op1] == 1) {
                     stackPriority = 1;
                 }
-                else if ((int)opPriority[(int)op1] == 2)
+                else if ((int)opPriority[op1] == 2)
                 {
                     stackPriority = 2;
                 }
-                else if ((int)opPriority[(int)op1] == 0)
+                else if (opPriority[op1] == 0)
                 {
                     stackPriority = 0;
                 }
                 while (curPriority <= stackPriority) {
                     if(!IsEmptyOperatorsStack()){
-                        str[jndex] = '|';
-                        jndex++;
+                        insert_sign(str, jndex);
                         str[jndex] = PopOperator();
                         jndex++;
                         op1 = PeekOperator();
-                        if ((int)opPriority[(int)op1] == 1) {
+                        if ((int)opPriority[op1] == 1) {
                             stackPriority = 1;
                         }
-                        else if ((int)opPriority[(int)op1] == 2)
+                        else if ((int)opPriority[op1] == 2)
                         {
                             stackPriority = 2;
                         }
-                        else curPriority = (stackPriority + 1);
+                        else if ((int)opPriority[op1] == 0)
+                        {
+                            stackPriority = 0;
+                        }
+                        // else curPriority = (stackPriority + 1);
                     }
                     
                 }
-                str[jndex] = '|';
-                jndex++;
+                insert_sign(str, jndex);
                 PushOperator(inputArray[i]);
+                insert_sign(str, jndex);
             }
         }
         
     }
-    str[jndex] = '|';
-    jndex++;
+    insert_sign(str, jndex);
     while (!IsEmptyOperatorsStack()) {
         str[jndex] = PopOperator();
         jndex++;
+        insert_sign(str, jndex);
     }
     return str;
 }
@@ -183,26 +188,27 @@ char* DoPolishNotion(char* inputArray,  int length)
 
 void CountInPolishNotion(char* polishNotion, int length)
 {
-    int num = 0;
+    long num = 0;
     for (int i = 0; i < length ; ++i)
     {
         int j  = 0;
         int k = 0;
+        int sizeOfTempArray = 20;
         if(polishNotion[i] >= '0' && polishNotion[i] <= '9')
         {
-            int sizeOfTempArray = 200;
             char* charToNumArray = new char[sizeOfTempArray]();
+            delete[] charToNumArray;
+            
             j = i;
             while (polishNotion[j] >= '0' && polishNotion[j] <= '9') {
                 charToNumArray[k] = polishNotion[j];
                 j++;
                 k++;
             }
-            num = atof(charToNumArray);
+            num = atol(charToNumArray);
             PushNumber(num);
             k = 0;
             i = j - 1;
-            delete[] charToNumArray;
         }
         else if (polishNotion[i] == '+'){
             PushNumber(  PopNumber() + PopNumber() );
@@ -214,31 +220,32 @@ void CountInPolishNotion(char* polishNotion, int length)
             PushNumber(  PopNumber() * PopNumber() );
         }
         else if (polishNotion[i] == '/'){
-            int delimiter  = PopNumber();
+            long delimiter  = PopNumber();
             PushNumber(  PopNumber() / delimiter);
         }
-        
     }
 }
 int main()
 {
     char* inputCharArray = new char[MAX]();
-    int size = MAX;
-        for (int i = 0;  i < size; ++i) {
-            char buf;
-            cin >> buf;
-            if(cin.eof()){
-                break;
-            }
-            inputCharArray[i] = buf;
-        }
+    int c = 0;
+    int i = 0;
+    while ((c = fgetc(stdin)) != EOF && c !='\n') {
+        inputCharArray[i] = c;
+        i++;
+    }
+    i = 0;
+    
     Init(opPriority);
-    int length =  LengthOfMas(inputCharArray);
-    char* polishNotion = DoPolishNotion(inputCharArray, length);
-    length = LengthOfMas(polishNotion);
+    int length_input = LengthOfMas(inputCharArray);
+    
+    char* polishNotion = DoPolishNotion(inputCharArray, length_input);
+    int length = LengthOfMas(polishNotion);
     CountInPolishNotion(polishNotion, length);
-    int a = PeekNumber();
-    cout << a;
-    delete [] inputCharArray;
+    if (length_input > 0) {
+        cout <<  PeekNumber();
+    }
+    
+    
     return 0;
 }
