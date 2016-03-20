@@ -1,12 +1,13 @@
 #include <iostream>
 #include <cstdlib>
-#define MAX 2000
-#define STACK_SIZE 200
+#define MAX 2000 //размер строки выражения в обратной польской записи
+#define STACK_SIZE 200 //стек операторов
 using namespace std;
 char str[MAX] = {};
 int sp = 0;
 
 int opPriority[256];
+//приоритет операция
 void Init(int* priorityArray){
     priorityArray['('] = 0;
     priorityArray['+'] = 1;
@@ -14,7 +15,11 @@ void Init(int* priorityArray){
     priorityArray['*'] = 2;
     priorityArray['/'] = 2;
     
-}
+}/* на инициализацию вида int opPriority[256] = { ['('] = 0, ['+'] } ;
+    компилятор g++ с ключем static выдавал ошибку:
+    "sorry unimplemented:non-trivial designated initializers not supported"   
+*/
+
 char stack[STACK_SIZE];
 long longs[MAX];
 char PopOperator(void) {
@@ -82,6 +87,7 @@ int LengthOfMas(char* array)
     }
     return length;
 }
+//вставка разелителя
 void insert_sign(char *str, int& index){
     if (str[index-1] != '|') {
         str[index] = '|';
@@ -185,7 +191,7 @@ char* DoPolishNotion(char* inputArray,  int length)
 }
 
 
-
+//вычисляем выражение в обратной польской записи
 void CountInPolishNotion(char* polishNotion, int length)
 {
     long num = 0;
