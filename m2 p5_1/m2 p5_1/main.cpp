@@ -13,7 +13,7 @@ int charAt(string s, int d)
     if (d < s.size())
         return s[d];
     else
-        return 0;
+        return -1;
 }
 
 class MSD
@@ -28,28 +28,26 @@ public:
     void sort(vector<string>& a)
     {
         aux.resize(a.size());
-        msd_sort(a, 0, a.size() - 1, 0);
+        msd_sort(a, 0, a.size(), 0);
     }
     
-    void msd_sort(vector<string>& a, int lo, int hi, int d)
+    void msd_sort(vector<string>& a, int l, int r, int d)
     {  // Sort from a[lo] to a[hi], starting at the dth character.
-        // int* count = new int[capacity+1]();
-        int count[capacity + 1];
-        for (int i = 0; i <= capacity; ++i) {
-            count[i] = 0;
-        }
-        if(hi <= lo) return;
+        // int* count = new int[capacity+1]()
         
-        for (size_t i = lo; i <= hi; ++i)
-            ++count[charAt(a[i], d) + 1];
-        for (size_t i = 1; i < capacity; ++i)
-            count[i] += count[i - 1];
-        for (size_t i = lo; i <= hi; ++i)
+        
+        if (r <= l + 1) return;
+        int* count = new int[256]();
+        for (int i = l; i < r; i++)
+            count[charAt(a[i], d) + 1]++;
+        for (int k = 1; k < 256; k++)
+            count[k] += count[k-1];
+        for (int i = l; i < r; i++)
             aux[count[charAt(a[i], d)]++] = a[i];
-        for (size_t i = lo; i <= hi; ++i)
+        for (int i = l; i < r; i++)
             a[i] = aux[i];
-        for (int r = 0; r < capacity-1; r++)
-            msd_sort(a, lo + count[r], lo + count[r+1] - 1, d+1);
+        for (int i = 1; i < 255; i++)
+            msd_sort(a, l + count[i], l + count[i+1] - 1 , d+1);
     }
     
 };
