@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>6A27A0B7-C66D-4F8A-8E5C-F7B6302868B5</string>
+	<key>IDESourceControlProjectName</key>
+	<string>calc_me</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>E753EBE2F28E382FF1B00FD6FDC9A2E3A7264530</key>
+		<string>https://github.com/Anatoliuz/tech_mail_ru_algs</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>calc_me/calc_me.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>E753EBE2F28E382FF1B00FD6FDC9A2E3A7264530</key>
+		<string>../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/Anatoliuz/tech_mail_ru_algs</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>E753EBE2F28E382FF1B00FD6FDC9A2E3A7264530</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>E753EBE2F28E382FF1B00FD6FDC9A2E3A7264530</string>
+			<key>IDESourceControlWCCName</key>
+			<string>tech_mail_ru_algs</string>
+		</dict>
+	</array>
+</dict>
+</plist>
