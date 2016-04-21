@@ -42,7 +42,7 @@ public:
         
         for (size_t i = lo; i <= hi; ++i)
             ++count[charAt(a[i], d) + 1];
-        for (size_t i = 1; i < 256; ++i)
+        for (size_t i = 1; i < capacity; ++i)
             count[i] += count[i - 1];
         for (size_t i = lo; i <= hi; ++i)
             aux[count[charAt(a[i], d)]++] = a[i];
