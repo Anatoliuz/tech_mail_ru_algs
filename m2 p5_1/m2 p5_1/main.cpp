@@ -13,7 +13,7 @@ int charAt(string s, int d)
     if (d < s.size())
         return s[d];
     else
-        return -1;
+        return 0;
 }
 
 class MSD
@@ -31,23 +31,23 @@ public:
         msd_sort(a, 0, a.size(), 0);
     }
     
-    void msd_sort(vector<string>& a, int l, int r, int d)
+    void msd_sort(vector<string>& a, int left, int right, int d)
     {  // Sort from a[lo] to a[hi], starting at the dth character.
         // int* count = new int[capacity+1]()
         
         
-        if (r <= l + 1) return;
+        if (right <= left + 1) return;
         int* count = new int[256]();
-        for (int i = l; i < r; i++)
+        for (int i = left; i < right; i++)
             count[charAt(a[i], d) + 1]++;
         for (int k = 1; k < 256; k++)
             count[k] += count[k-1];
-        for (int i = l; i < r; i++)
+        for (int i = left; i < right; i++)
             aux[count[charAt(a[i], d)]++] = a[i];
-        for (int i = l; i < r; i++)
+        for (int i = left; i < right; i++)
             a[i] = aux[i];
         for (int i = 1; i < 255; i++)
-            msd_sort(a, l + count[i], l + count[i+1] - 1 , d+1);
+            msd_sort(a, left + count[i], left + count[i+1] - 1 , d+1);
     }
     
 };
