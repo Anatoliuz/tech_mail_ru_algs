@@ -25,13 +25,13 @@ private:
 public:
     
     
-    void sorte(vector<string>& a)
+    void sort(vector<string>& a)
     {
         aux.resize(a.size());
-        sort(a, 0, a.size() - 1, 0);
+        msd_sort(a, 0, a.size() - 1, 0);
     }
     
-    void sort(vector<string>& a, int lo, int hi, int d)
+    void msd_sort(vector<string>& a, int lo, int hi, int d)
     {  // Sort from a[lo] to a[hi], starting at the dth character.
         // int* count = new int[capacity+1]();
         int count[capacity + 1];
@@ -49,7 +49,7 @@ public:
         for (size_t i = lo; i <= hi; ++i)
             a[i] = aux[i];
         for (int r = 0; r < capacity-1; r++)
-            sort(a, lo + count[r], lo + count[r+1] - 1, d+1);
+            msd_sort(a, lo + count[r], lo + count[r+1] - 1, d+1);
     }
     
 };
@@ -76,7 +76,7 @@ int main() {
         str.clear();
     }
     
-    msdclass.sorte(str_array);
+    msdclass.sort(str_array);
     
     cout << "After sort" << endl;
     for (vector<string>::iterator it = str_array.begin(); it < str_array.end(); ++it) {
